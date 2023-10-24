@@ -1,0 +1,54 @@
+#WILD 7500 Complex Code
+
+#How much does BSNB decrease the growth of a loblolly pine stand
+#stand = 1 acre, 600 trees per acre, area = 264 * 165 ft, which is 1 acre
+
+k = 600 #carrying capacity
+
+#trees placed every 8x9ft -> 600 trees/ acre
+plot(-100,-100, xlim=c(0,264), ylim=c(0,165))
+
+x<- rnorm(500)
+plot(x, pch = 19, col = 29)
+grid(nx = NULL, ny = NULL,
+     lty = 2,      # Grid line type
+     col = "gray", # Grid line color
+     lwd = 2)      # Grid line width
+
+#all trees start at age 0 and will grow until 35
+#add 1 to age and continue to age 1 every cycle
+Lob = data.frame(ID=seq(1,600), Age= (0), Growth = (0), Diseasestart = (0))
+
+for(i in 1:35){
+  #add 1 year every round
+  Lob$Age = Lob$Age + (1)
+  
+  
+  #thinning starts at age 15 and the second thin is at age 25, final cut is at age 35 when harvested
+  #if year = 15 or 25 then remove X trees
+  #if year = 35 then cut all trees
+  
+  for(i in 1:nrow(Lob)){
+    # Lob$Age = 15,25 remove X amount from Lob data table move to new table removed data table
+    # If age = 15, growth = 0 
+    if(Lob$Age = 15 or 25){#remove 50 trees randomly}
+      # If age = 25, remove X
+      # remove trees if disease = 100
+    }
+    
+    
+    #spread disease randomly- increments of 10%
+    #0% = no disease
+    #10%-30% = low disease
+    #40%-70%= moderate disease
+    #80%-100% = severe disease
+    
+    
+    
+    #grow according to disease level
+    #give out DBH and Height- normal Ht, page 11-17/ normal DBH, pg 11-14 to 19
+    
+    
+    #out put will be cubic feet of timber if age is 35
+  }
+  
