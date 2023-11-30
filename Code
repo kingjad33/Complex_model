@@ -7,16 +7,14 @@ source(paste(directory, "/source/FunctionSourcer.R", sep = ''))
 #How much does BSNB decrease the growth of a loblolly pine stand
 #stand = 1 acre, 600 trees per acre, area = 264 * 165 ft, which is 1 acre
 
-k = 600 #carrying capacity
+k = 700 #carrying capacity
 #all trees start at age 0 and will grow until 35
-#add 1 to age and continue to age 1 every cycle
 
-
-Lob = data.frame(ID=seq(1,k), Age= (0), Diseasestart = (0), RGTotal= (0), HtTotal= (0))
+Lob = data.frame(ID=seq(1,k), Age= (0), Diseasestart = (0), RGTotal= (0), HtTotal= (0)) #set up data frame
 
 
 for(i in 1:35){
-#add 1 year every round
+#add 1 to age and continue to age 1 every cycle
 Lob$Age = Lob$Age + (1)
 
 
@@ -50,38 +48,13 @@ Lob$Disease = Lob$Disease + disease
 #if 10-20, growth = 4.198236 per year
 #if 30-50, growth = 3.541407 per year
 #if 60-100, growth = 3.33508 per year
-
-
-
+#created an equation to follow these trends
 Lob$RG =(4.971733*(1-Lob$Disease[1:k]/280))
 Lob$RGTotal= (Lob$RG + Lob$RGTotal)
 
+#average loblolly pine tree growth about 1-2 feet per year, so inches every year, then adjusted to disease 
 Lob$Ht =(15*(1-Lob$Disease[1:k]/240))
 Lob$HtTotal= (Lob$Ht + Lob$HtTotal)
-
-
-
-#out put will be cubic feet of timber if age is 35
-#add write 
-#calculated some summaries
-meanDisease   = mean(Lob$Disease, na.rm=T)
-meanRG = mean(Lob$RG, na.rm=T)
-meanHt = mean(Lob$Ht, na.rm=T)
-
-
- 
-
-#record data to file
-#towrite = c("ID", "Age", "TotalGrowth", "Diseasestart", "Disease", "RG","Ht", "meanDisease", "meanRG", "meanHt")
-
-#write.table(t(towrite), paste(outdir,"outputsummary.csv", sep=""), append=F, sep=",", row.names=F, col.names=F)
-
-
-#towrite = c(ID, Age, TotalGrowth, Diseasestart, Disease, RG,Ht, meanDisease, meanRG, meanHt)
-#write data, append = F
-#write.table(t(towrite), paste(outdir,"outputsummary.csv", sep=""), append=T, sep=",", row.names=F, col.names=F)
-
-
 
 }
 
@@ -91,13 +64,13 @@ View(Lob)
 
 
 #Model with no disease spreading
-z=600
-Lob_heathy = data.frame(ID=seq(1,z), Age= (0), Diseasestart = (0), RGTotal= (0), HtTotal= (0))
+z=700
+Lob_H = data.frame(ID=seq(1,z), Age= (0), Diseasestart = (0), RGTotal_H= (0), HtTotal_H= (0))
 
 
 for(i in 1:35){
   #add 1 year every round
-  Lob_heathy$Age = Lob_heathy$Age + (1)
+  Lob_H$Age = Lob_H$Age + (1)
   
   
   #thinning starts at age 15 and the second thin is at age 25, final cut is at age 35 when harvested
@@ -115,14 +88,10 @@ for(i in 1:35){
   # }
   
   
-  #spread disease randomly- every year they get a value of 0-10
-  #0% = no disease
-  #10%-30% = low disease
-  #40%-70%= moderate disease
-  #80%-100% = severe disease
+  #made a small amount of disease to take into account natural stress and other diseases present
   diseaseH = rnorm(600, mean=.5, sd=.25)
   hist(diseaseH)
-  Lob_heathy$Disease = Lob_heathy$Disease + diseaseH
+  Lob_H$Disease = Lob_H$Disease + diseaseH
   
   
   #grow according to disease level
@@ -130,39 +99,45 @@ for(i in 1:35){
   #if 10-20, growth = 4.198236 per year
   #if 30-50, growth = 3.541407 per year
   #if 60-100, growth = 3.33508 per year
+  #used same equation as diseased stand for radial growth and height growth
   
+  Lob_H$RG_H =(4.971733*(1- Lob_H$Disease[1:z]/280))
+  Lob_H$RGTotal_H= (Lob_H$RG_H + Lob_H$RGTotal_H)
   
-  
-  Lob_heathy$RG =(4.971733*(1- Lob_heathy$Disease[1:z]/280))
-  Lob_heathy$RGTotal= (Lob_heathy$RG + Lob_heathy$RGTotal)
-  
-  Lob_heathy$Ht =(15*(1-Lob_heathy$Disease[1:z]/280))
-  Lob_heathy$HtTotal= (Lob_heathy$Ht + Lob_heathy$HtTotal)
-  
-  
-  
-  #out put will be cubic feet of timber if age is 35
-  #add write 
-  #calculated some summaries
-  meanDisease   = mean(Lob_heathy$Disease, na.rm=T)
-  meanRG = mean(Lob_heathy$RG, na.rm=T)
-  meanHt = mean(Lob_heathy$Ht, na.rm=T)
-  
-  
-  
-  
-  #record data to file
-  #towrite = c("ID", "Age", "TotalGrowth", "Diseasestart", "Disease", "RG","Ht", "meanDisease", "meanRG", "meanHt")
-  
-  #write.table(t(towrite), paste(outdir,"outputsummary.csv", sep=""), append=F, sep=",", row.names=F, col.names=F)
-  
-  
-  #towrite = c(ID, Age, TotalGrowth, Diseasestart, Disease, RG,Ht, meanDisease, meanRG, meanHt)
-  #write data, append = F
-  #write.table(t(towrite), paste(outdir,"outputsummary.csv", sep=""), append=T, sep=",", row.names=F, col.names=F)
-  
-  
-  
+  Lob_H$Ht_H =(15*(1-Lob_H$Disease[1:z]/280))
+  Lob_H$HtTotal_H= (Lob_H$Ht_H + Lob_H$HtTotal_H)
+
 }
 
-View(Lob_heathy)
+View(Lob_H)
+
+#results summarize for each scenario
+mean(Lob$Disease) #87.40436
+mean(Lob_H$Disease) #17.50562, much less disease
+
+mean(Lob$RGTotal) #146.0476mm, 5.75in DBH
+mean(Lob_H$RGTotal_H) #168.4287mm, 6.63in DBH
+
+mean(Lob$HtTotal)  #426.5728 in, 35.54 ft
+mean(Lob_H$HtTotal_H) #508.158 in, 42.34ft
+
+#current timber price is $23.00/ton 
+#diseased stand: pounds of lob per acre -> tons per acre
+(150*700)*0.0005 #52.5 tons per acre
+52.5*23 #$1,207.5 for an acre
+10*1207.5
+
+#healthy stand: pounds of lob per acre -> tons per acre
+(200*700)*0.0005 #70 tons per acre
+70*23 #$1,610 for an acre
+10*1610
+
+#Alabama has 8.5 million acres of loblolly
+#diseased
+8500000*1207.5
+
+#Healthy
+8500000*1610
+
+#Diseased - Healthy
+1.3685e+10 - 10263750000
